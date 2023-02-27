@@ -73,12 +73,10 @@ int main(int argc, char* argv[]) {
   // Compile Fragment Shader.
   const GLchar* fs_sources[] = { R"(
     #version 150
-    layout(location = 0) in vec2 in_position;
-    layout(location = 1) in vec3 in_color;
-    out vec3 v_color;
+    in vec3 v_color;
+    out vec4 o_color;
     void main() {
-      gl_Position = vec4(in_position, 0.0, 1.0);
-      v_color = in_color;
+      o_color = vec4(v_color, 1.0);
     }
   )" };
   auto fs = glCreateShader(GL_FRAGMENT_SHADER);
