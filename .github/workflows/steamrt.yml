@@ -1,0 +1,21 @@
+name: Steam Runtime Build
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the game
+      run: |
+        docker build . --file Dockerfile --tag steamrt-build
+        docker run -d --name steamrt-build steamrt-build
+        docker cp steamrt-build:/game/bin .
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: Steam Runtime Game Binaries
+        path: bin
