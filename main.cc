@@ -3,7 +3,7 @@
 #include <SDL_opengl.h>
 
 int main(int argc, char* argv[]) {
-  if (!SDL_Init(SDL_INIT_VIDEO)) {
+  if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Could not initialize SDL2: %s", SDL_GetError());
     return 1;
   }
@@ -50,16 +50,16 @@ int main(int argc, char* argv[]) {
   GLuint vao;
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, 20, nullptr);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 20, nullptr);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, 20, (char*)nullptr + 8);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 20, (char*)nullptr + 8);
   glEnableVertexAttribArray(1);
 
   // Compile Vertex Shader.
   const GLchar* vs_sources[] = { R"(
     #version 150
-    layout(location = 0) in vec2 in_position;
-    layout(location = 1) in vec3 in_color;
+    in vec2 in_position;
+    in vec3 in_color;
     out vec3 v_color;
     void main() {
       gl_Position = vec4(in_position, 0.0, 1.0);
@@ -87,6 +87,8 @@ int main(int argc, char* argv[]) {
   auto program = glCreateProgram();
   glAttachShader(program, vs);
   glAttachShader(program, fs);
+  glBindAttribLocation(program, 0, "in_position");
+  glBindAttribLocation(program, 1, "in_color");
   glLinkProgram(program);
   glUseProgram(program);
 
